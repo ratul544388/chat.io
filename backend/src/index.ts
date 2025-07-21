@@ -6,6 +6,8 @@ dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
+console.log("Index.js file Check")
+
 
 app.listen(PORT, async () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
