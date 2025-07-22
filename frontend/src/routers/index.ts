@@ -1,9 +1,10 @@
 import AuthLayout from "@/layouts/auth-layout";
+import ChatLayout from "@/layouts/chat-layout";
 import MainLayout from "@/layouts/main-layout";
-import ProtectedLayout from "@/layouts/protected-layout";
 import Login from "@/pages/auth/login";
 import Register from "@/pages/auth/register";
 import ChatList from "@/pages/protected/chat-list";
+import Home from "@/pages/public/home";
 import { createBrowserRouter } from "react-router";
 export const router = createBrowserRouter([
   {
@@ -23,7 +24,11 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        Component: ProtectedLayout,
+        path: "/",
+        Component: Home,
+      },
+      {
+        Component: ChatLayout,
         children: [
           {
             path: "/chats",

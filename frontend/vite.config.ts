@@ -11,6 +11,6 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "dist", // 👈 explicitly tell Vercel what to expect
+    outDir: "dist",
   },
 });

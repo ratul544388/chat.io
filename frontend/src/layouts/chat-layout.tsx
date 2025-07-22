@@ -1,8 +1,8 @@
 import { useAuthStore } from "@/features/auth/hooks/use-auth-store";
 import { Navigate, Outlet } from "react-router";
-import { Sidebar } from "./components/sidebar";
+import { Sidebar } from "../features/chats/components/sidebar";
 
-const ProtectedLayout = () => {
+const ChatLayout = () => {
   const { user } = useAuthStore();
 
   if (!user) {
@@ -17,4 +17,4 @@ const ProtectedLayout = () => {
   );
 };
 
-export default ProtectedLayout;
+export default ChatLayout;
