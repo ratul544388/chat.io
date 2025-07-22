@@ -29,7 +29,7 @@ export async function request<Data = unknown, Response = unknown>({
     params,
     withCredentials: true,
     headers: {
-      Authorization: `Bearer ${idToken}`,
+      Authorization: `Bearer ${idToken}`
     },
   });
 
