@@ -1,12 +1,11 @@
 import { Router } from "express";
-import { createUser } from "../user.controller";
+import { firebaseAuthMiddleware } from "../middlewares/auth-middleware";
+import { createUser, getUsers } from "../controllers/user.controller";
 
 const router = Router();
 
-router.post("/", createUser);
+router.post("/", firebaseAuthMiddleware, createUser);
 
-router.get("/", (req, res) => {
-  res.json({ messages: [] });
-});
+router.get("/", firebaseAuthMiddleware, getUsers);
 
 export default router;
