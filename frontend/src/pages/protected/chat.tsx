@@ -20,6 +20,8 @@ const Chat = () => {
     },
   });
 
+  console.log({isPending, data})
+
   return <div></div>;
 };
 
