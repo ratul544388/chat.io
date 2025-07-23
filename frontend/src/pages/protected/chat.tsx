@@ -1,28 +1,27 @@
-import { request } from "@/lib/request";
-import { useMutation } from "@tanstack/react-query";
+import { ChatBody } from "@/features/chats/components/chat-body";
+import { ChatHeader } from "@/features/chats/components/chat-header";
+import { ChatInput } from "@/features/chats/components/chat-input";
+import { getSocket } from "@/lib/socket";
+import { useEffect } from "react";
 import { useParams } from "react-router";
 
 const Chat = () => {
   const { chatId } = useParams();
+  useEffect(() => {
+    const socket = getSocket();
+    socket.emit("join-chat", chatId);
 
-  console.log(chatId);
-
-  const { data, isPending } = useMutation<
-    { message: string },
-    { error: string }
-  >({
-    mutationFn: () => request({ url: "" }),
-    onSuccess: (data) => {
-      console.log(data.message);
-    },
-    onError: ({ error }) => {
-      console.log(error);
-    },
-  });
-
-  console.log({isPending, data})
-
-  return <div></div>;
+    return () => {
+      socket.emit("leave-chat", chatId);
+    };
+  }, [chatId]);
+  return (
+    <div className="flex flex-col flex-1">
+      <ChatHeader />
+      <ChatBody />
+      <ChatInput />
+    </div>
+  );
 };
 
 export default Chat;

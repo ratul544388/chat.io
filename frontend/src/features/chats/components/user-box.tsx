@@ -1,24 +1,24 @@
+import { cn } from "@/lib/utils";
 import type { User } from "@/types";
+import { useCreateChat } from "../hooks/use-create-chat";
+import { Avatar } from "./avatar";
 
-const UserBox = ({ name, id, image  }: User) => {
-    
+export const UserBox = ({ user }: { user: User }) => {
+  const { isPending, createChat } = useCreateChat(user.id);
   return (
     <li
+      onClick={() => createChat()}
       role="button"
       tabIndex={1}
-      key={id}
-      className="flex gap-2 py-1.5 hover:bg-accent rounded-md px-2 transition-colors cursor-pointer"
+      className={cn(
+        "py-1.5 flex items-center gap-2 rounded-none hover:bg-accent px-2 transition-colors cursor-pointer",
+        isPending && "opacity-60 pointer-events-none"
+      )}
     >
-      <img
-        src={image || ""}
-        alt="Avatar"
-        className="size-9 rounded-full bg-accent"
-      />
+      <Avatar otherUser={user} />
       <div className="text-sm font-medium">
-        <p>{name}</p>
+        <p>{user.name}</p>
       </div>
     </li>
   );
 };
-
-export default UserBox;

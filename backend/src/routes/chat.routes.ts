@@ -1,15 +1,13 @@
 import { Router } from "express";
+import { createChat, getChat, getChats } from "../controllers/chat.controller";
+import { authMiddleware } from "../middlewares/auth-middleware";
 
 const router = Router();
 
-router.post("/", (req, res) => {
-  // Create new chat
-  res.json({ message: "Chat created" });
-});
+router.get("/", authMiddleware, getChats);
 
-router.get("/", (req, res) => {
-  // Get all chats for the user
-  res.json({ chats: [] });
-});
+router.post("/:otherUserId", authMiddleware, createChat);
+
+router.get("/:id", authMiddleware, getChat);
 
 export default router;

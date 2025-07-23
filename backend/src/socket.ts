@@ -1,26 +1,51 @@
+import { Server as HTTPServer } from "http";
 import { Server as SocketIOServer, Socket } from "socket.io";
-import http from "http";
 
-export function initSocket(httpServer: http.Server) {
-  const io = new SocketIOServer(httpServer, {
+let io: SocketIOServer;
+const onlineUsers = new Map<string, string>();
+
+export const initSocketIO = (server: HTTPServer) => {
+  io = new SocketIOServer(server, {
     cors: {
-      origin: "*",
+      origin: process.env.CLIENT_URL,
       methods: ["GET", "POST"],
+      credentials: true,
     },
   });
 
   io.on("connection", (socket: Socket) => {
-    console.log(`🔌 User connected: ${socket.id}`);
+    const userId = socket.handshake.auth.userId;
 
-    socket.on("message", (data) => {
-      console.log(`📨 Message received: ${data}`);
-      socket.broadcast.emit("message", data);
+    if (!userId) {
+      console.warn(
+        "No userId provided in handshake.auth. Disconnecting socket."
+      );
+      socket.disconnect();
+      return;
+    }
+
+    onlineUsers.set(userId, socket.id);
+
+    io.emit("online-users", Array.from(onlineUsers.keys()));
+
+    socket.on("join-chat", (chatId: string) => {
+      socket.join(chatId);
+    });
+
+    socket.on("leave-chat", (chatId: string) => {
+      socket.leave(chatId);
     });
 
     socket.on("disconnect", () => {
-      console.log(`❌ User disconnected: ${socket.id}`);
+      onlineUsers.delete(userId);
+      io.emit("online-users", Array.from(onlineUsers.keys()));
     });
   });
+};
 
+export const getIO = () => {
+  if (!io) {
+    throw new Error("Socket.IO not initialized yet.");
+  }
   return io;
-}
+};

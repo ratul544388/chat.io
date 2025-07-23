@@ -1,0 +1,1 @@
+export const placeholderUser = "/placeholder-user.webp"

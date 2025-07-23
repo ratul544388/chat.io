@@ -1,42 +1,29 @@
-import { auth } from "@/lib/firebase";
+import { request } from "@/lib/request";
 import { useMutation } from "@tanstack/react-query";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
-import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { createUser } from "../helpers/create-user";
 import type { RegisterValues } from "../validations";
+import { useNavigate } from "react-router";
+import type { AxiosError } from "axios";
+import { useAuthStore } from "./use-auth-store";
+import type { User } from "@/types";
 
 export const useRegister = () => {
+  const { setUser } = useAuthStore();
   const navigate = useNavigate();
-  const { mutate, isPending } = useMutation({
-    mutationFn: async (values: RegisterValues) => {
-      const { user: createdUser } = await createUserWithEmailAndPassword(
-        auth,
-        values.email,
-        values.password
-      );
-      await updateProfile(createdUser, { displayName: values.name });
-      const { user } = await signInWithEmailAndPassword(
-        auth,
-        values.email,
-        values.password
-      );
-      await createUser(user);
-      return user;
-    },
-    onSuccess: () => {
-      toast.success("Account created successfully");
+  const { mutate, isPending } = useMutation<
+    User,
+    AxiosError<{ message: string }>,
+    RegisterValues
+  >({
+    mutationFn: (data: RegisterValues) =>
+      request({ method: "post", url: "/auth/register", data }),
+    onSuccess: (user) => {
+      setUser(user);
       navigate("/chats");
+      toast.success("Account created successfully");
     },
-    onError: (error) => {
-      if (error.message.includes("email-already-in-use")) {
-        return toast.error("This email is already registered.");
-      }
-      return toast.error(error.message);
+    onError: (error: AxiosError<{ message: string }>) => {
+      toast.error(error.response?.data.message);
     },
   });
 

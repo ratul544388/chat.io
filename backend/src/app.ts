@@ -7,6 +7,7 @@ import { errorHandler } from "./middlewares/error-handler";
 import userRotues from "./routes/user.routes";
 import chatRoutes from "./routes/chat.routes";
 import messageRoutes from "./routes/message.routes";
+import authRoutes from "./routes/auth-routes";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(morgan("dev"));
 app.use("/api/users", userRotues);
 app.use("/api/chats", chatRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/auth", authRoutes);
 
 app.get("/", (_req, res) => {
   res.send({ message: "Api is working" });

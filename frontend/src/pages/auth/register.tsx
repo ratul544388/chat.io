@@ -11,7 +11,6 @@ import {
   type RegisterValues,
 } from "@/features/auth/validations";
 import { Link } from "react-router";
-import OAuthLogin from "@/features/auth/components/oauth-login";
 
 const Register = () => {
   const { register, isPending } = useRegister();
@@ -19,7 +18,7 @@ const Register = () => {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
-      email: "",
+      email: "ratul@gmail.com",
       password: "Ratul544@",
     },
   });
@@ -33,7 +32,6 @@ const Register = () => {
           access fast and secure messaging features today!
         </p>
       </div>
-      <OAuthLogin />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit((values) => register(values))}

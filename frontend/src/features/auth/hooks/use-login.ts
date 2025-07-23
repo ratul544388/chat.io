@@ -1,30 +1,30 @@
+import { request } from "@/lib/request";
+import type { User } from "@/types";
 import { useMutation } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import type { LoginValues } from "../validations";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useAuthStore } from "./use-auth-store";
 
 export const useLogin = () => {
-  const { mutate, isPending } = useMutation({
-    mutationFn: async (values: LoginValues) => {
-      const auth = getAuth();
-      const { user } = await signInWithEmailAndPassword(
-        auth,
-        values.email,
-        values.password
-      );
-      return user;
-    },
-    onSuccess: () => {
+  const { setUser } = useAuthStore();
+
+  const navigate = useNavigate();
+  const { mutate, isPending } = useMutation<
+    User,
+    AxiosError<{ message: string }>,
+    LoginValues
+  >({
+    mutationFn: (values: LoginValues) =>
+      request({ method: "post", url: "/auth/login", data: values }),
+    onSuccess: (user) => {
+      setUser(user);
+      navigate("/chats");
       toast.success("Logged in successfully");
     },
     onError: (error) => {
-      if (error.message.includes("too-many-requests")) {
-        return toast.error("Too many requests. Please try again later");
-      }
-      if (error.message.includes("invalid-credential")) {
-        return toast.error("Incorrect Email or Password");
-      }
-      toast.error("Something went wrong");
+      toast.error(error.response?.data.message);
     },
   });
 

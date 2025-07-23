@@ -11,6 +11,7 @@ model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   email     String   @unique
+  password  String?
   image     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -29,12 +30,14 @@ model Chat {
   name String?
 
   isGroup Boolean @default(false)
+  image   String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users   User[]   @relation(fields: [userIds], references: [id])
-  userIds String[] @db.ObjectId
+  users    User[]    @relation(fields: [userIds], references: [id])
+  userIds  String[]  @db.ObjectId
+  messages Message[]
 }
 
 model Message {
@@ -50,9 +53,21 @@ model Message {
 
   seenBy    User[]   @relation(name: "SeenBy", fields: [seenByIds], references: [id])
   seenByIds String[] @db.ObjectId
+
+  chat   Chat   @relation(fields: [chatId], references: [id])
+  chatId String @db.ObjectId
 }
 
-enum Media {
+model Media {
+  id   String    @id @default(auto()) @map("_id") @db.ObjectId
+  type MediaType
+  url  String
+
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  messageId String  @db.ObjectId
+}
+
+enum MediaType {
   IMAGE
   VIDEO
 }

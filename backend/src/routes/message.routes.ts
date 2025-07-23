@@ -1,15 +1,11 @@
 import { Router } from "express";
+import { getMessages, sendMessage } from "../controllers/message-controller";
+import { authMiddleware } from "../middlewares/auth-middleware";
 
 const router = Router();
 
-router.post("/", (req, res) => {
-  // Send a message
-  res.json({ message: "Message sent" });
-});
+router.post("/:chatId", authMiddleware, sendMessage);
 
-router.get("/:chatId", (req, res) => {
-  // Get all messages for a chat
-  res.json({ messages: [] });
-});
+router.get("/:chatId", authMiddleware, getMessages);
 
 export default router;

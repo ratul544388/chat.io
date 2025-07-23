@@ -5,7 +5,6 @@ import { FormInput } from "@/components/form-input";
 import { FormPasswordInput } from "@/components/form-password-input";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import OAuthLogin from "@/features/auth/components/oauth-login";
 import { useLogin } from "@/features/auth/hooks/use-login";
 import { loginSchema, type LoginValues } from "@/features/auth/validations";
 import { Link } from "react-router";
@@ -15,7 +14,7 @@ const Login = () => {
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
+      email: "ratul@gmail.com",
       password: "Ratul544@",
     },
   });
@@ -28,7 +27,6 @@ const Login = () => {
           Access your messages and connect with people in real time.
         </p>
       </div>
-      <OAuthLogin/>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit((values) => login(values))}

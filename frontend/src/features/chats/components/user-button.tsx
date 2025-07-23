@@ -4,13 +4,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { placeholderUser } from "@/constants";
 import { useAuthStore } from "@/features/auth/hooks/use-auth-store";
+import { request } from "@/lib/request";
 import { LogOut, User2 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 export const UserButton = () => {
   const [open, setOpen] = useState(false);
-  const { user } = useAuthStore();
+  const { user, setUser } = useAuthStore();
+  const navigate = useNavigate();
   const items = [
     {
       label: "Profile",
@@ -20,20 +24,30 @@ export const UserButton = () => {
     {
       label: "Logout",
       icon: LogOut,
-      onClick: () => {},
+      onClick: async () => {
+        request({
+          method: "post",
+          url: "/auth/logout",
+          onSuccess: () => {
+            setUser(null);
+            navigate("/");
+          },
+        });
+      },
     },
   ];
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button className="mt-auto rounded-full h-12" variant="outline">
+        <Button className="mt-auto rounded-full h-12 mx-4" variant="outline">
           <img
-            src={user?.photoURL || ""}
+            src={user?.image || placeholderUser}
             alt=""
-            className="size-7 rounded-full"
+            className="size-8 rounded-full"
           />
           <div className="flex flex-col items-start">
-            <span className="leading-4">{user?.displayName}</span>
+            <span className="leading-4">{user?.name}</span>
             <span className="leading-4 font-normal text-muted-foreground">
               {user?.email}
             </span>
@@ -43,6 +57,7 @@ export const UserButton = () => {
       <PopoverContent className="p-0 py-2 flex flex-col w-[280px]">
         {items.map(({ label, icon: Icon, onClick }) => (
           <Button
+            key={label}
             onClick={() => {
               onClick();
               setOpen(false);
