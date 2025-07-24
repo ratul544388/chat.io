@@ -5,11 +5,27 @@ export const CHAT_SELECT = {
   name: true,
   isGroup: true,
   image: true,
+  lastMessageAt: true,
+  messages: {
+    select: {
+      content: true,
+      _count: {
+        select: {
+          media: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 1,
+  },
   users: {
     select: {
       id: true,
       name: true,
       image: true,
+      lastActiveAt: true,
     },
     take: 2,
   },
@@ -20,6 +36,7 @@ export const MESSAGE_SELECT = {
   content: true,
   media: true,
   createdAt: true,
+  chatId: true,
   user: {
     select: {
       id: true,

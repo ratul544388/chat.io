@@ -29,26 +29,43 @@ export const sendMessage: RequestHandler = async (req, res, next) => {
       type: getMediaType(url),
     }));
 
-    const newMessage = await db.message.create({
-      data: {
-        chatId,
-        userId: req.user.id,
-        content,
-        ...(media.length
-          ? {
-              media: {
-                createMany: {
-                  data: mediaEntries,
+    const [newMessage, chat] = await Promise.all([
+      await db.message.create({
+        data: {
+          chatId,
+          userId: req.user.id,
+          content,
+          ...(media.length
+            ? {
+                media: {
+                  createMany: {
+                    data: mediaEntries,
+                  },
                 },
-              },
-            }
-          : {}),
-      },
-      select: MESSAGE_SELECT,
-    });
+              }
+            : {}),
+        },
+        select: MESSAGE_SELECT,
+      }),
+
+      await db.chat.update({
+        where: { id: chatId },
+        data: {
+          lastMessageAt: new Date(),
+        },
+        select: {
+          userIds: true,
+        },
+      }),
+    ]);
+
+    if (!chat) {
+      return res.status(400).json({ error: "Chat not found" });
+    }
 
     const io = getIO();
-    io.to(chatId).emit("new-message", newMessage);
+
+    chat.userIds.forEach((id) => io.to(id).emit("new-message", newMessage));
 
     return res.status(201).json(newMessage);
   } catch (error) {

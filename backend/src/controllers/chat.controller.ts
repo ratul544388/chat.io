@@ -30,9 +30,11 @@ export const getChats: RequestHandler = async (req, res, next) => {
           },
         },
       },
-      select: CHAT_SELECT
+      select: CHAT_SELECT,
+      orderBy: {
+        lastMessageAt: "desc",
+      },
     });
-
 
     return res.status(200).json(chats);
   } catch (error) {

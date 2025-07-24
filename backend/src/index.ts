@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import http from "http";
 import app from "./app";
 import { db } from "./lib/db";
-import { initSocketIO } from "./socket"; // 👈 import socket
+import { initSocketIO } from "./socket";
 
 dotenv.config();
 
