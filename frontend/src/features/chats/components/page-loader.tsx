@@ -6,4 +6,4 @@ export const PageLoader = () => {
       <p className="text-lg font-semibold text-primary animate-pulse">Chat.io</p>
     </div>
   );
-};
+}
