@@ -18,5 +18,5 @@ export const useAuthUser = () => {
     throw new Error("useAuthUser must be used within an authenticated route");
   }
 
-  return user;
+  return user
 };
