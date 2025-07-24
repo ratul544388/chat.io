@@ -12,7 +12,7 @@ export const useOnlineUserListener = () => {
     }
 
     const handleOnlineUsers = (userIds: string[]) => {
-      setOnlineUserIds(userIds);
+      setOnlineUserIds(userIds)
     };
 
     if (socket.connected) {
