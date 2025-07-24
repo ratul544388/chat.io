@@ -1,16 +1,15 @@
 import { useAuthStore } from "@/features/auth/hooks/use-auth-store";
 import { request } from "@/lib/request";
+import { SocketProvider } from "@/providers/socket-provider";
 import type { User } from "@/types";
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router";
 import { Sidebar } from "../features/chats/components/sidebar";
-import { disconnectSocket, getSocket, initSocket } from "@/lib/socket";
-import { useOnlineUsersStore } from "@/features/auth/hooks/use-online-users-store";
+import { PageLoader } from "@/features/chats/components/page-loader";
 
 const ChatLayout = () => {
   const { user, setUser } = useAuthStore();
   const [loading, setLoading] = useState(true);
-  const { setOnlineUserIds } = useOnlineUsersStore();
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -26,41 +25,8 @@ const ChatLayout = () => {
     fetchCurrentUser();
   }, [setUser]);
 
-  useEffect(() => {
-    if (!user) {
-      disconnectSocket();
-      setOnlineUserIds([]);
-      return;
-    }
-
-    initSocket(user);
-    const socket = getSocket();
-    if (!socket) return;
-
-    const handleOnlineUsers = (userIds: string[]) => {
-      setOnlineUserIds(userIds);
-    };
-
-    const handleConnect = () => {
-      socket.on("online-users", handleOnlineUsers);
-    };
-
-    if (socket.connected) {
-      socket.on("online-users", handleOnlineUsers);
-    } else {
-      socket.once("connect", handleConnect);
-    }
-
-    return () => {
-      if (socket.connected) {
-        socket.off("online-users", handleOnlineUsers);
-        socket.off("connect", handleConnect);
-      }
-    };
-  }, [setOnlineUserIds, user]);
-
   if (loading) {
-    return "Loading...";
+    return <PageLoader/>
   }
 
   if (!user) {
@@ -68,10 +34,12 @@ const ChatLayout = () => {
   }
 
   return (
-    <div className="flex">
-      <Sidebar />
-      <Outlet />
-    </div>
+    <SocketProvider>
+      <div className="flex">
+        <Sidebar />
+        <Outlet />
+      </div>
+    </SocketProvider>
   );
 };
 

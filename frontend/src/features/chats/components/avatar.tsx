@@ -16,7 +16,7 @@ export const Avatar = ({ otherUser }: AvatarProps) => {
       <img
         src={otherUser.image || placeholderUser}
         alt="Chat Avatar"
-        className="size-9 rounded-full bg-accent"
+        className="size-9 min-w-9 rounded-full bg-accent"
       />
       <span
         className={cn(

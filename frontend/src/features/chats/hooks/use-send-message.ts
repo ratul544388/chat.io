@@ -37,6 +37,7 @@ export const useSendMessage = () => {
       const newMessage: MessageWithUser = {
         id: tempId,
         content: variables.content,
+        chatId,
         media: [],
         user: {
           id: user.id,

@@ -1,58 +1,32 @@
-import { socket } from "@/lib/socket";
+import { useOnlineUsersStore } from "@/features/auth/hooks/use-online-users-store";
+import { useSocket } from "@/providers/socket-provider";
 import { useEffect } from "react";
-import { useAuthStore } from "./use-auth-store";
-import { useOnlineUsersStore } from "./use-online-users-store";
 
 export const useOnlineUserListener = () => {
-  const { addOnlineUser, removeOnlineUser, setOnlineUsers } =
-    useOnlineUsersStore();
-  const { user } = useAuthStore();
-  const id = user?.id;
-
-  console.log(socket.connected)
+  const socket = useSocket();
+  const { setOnlineUserIds } = useOnlineUsersStore();
 
   useEffect(() => {
-    if (!id) return;
+    if (!socket) {
+      return;
+    }
 
-    console.log(id)
-
-    const handleUserOnline = (id: string) => {
-      console.log("User online:", id);
-      addOnlineUser(id);
-    };
-
-    const handleUserOffline = (id: string) => {
-      console.log("User offline:", id);
-      removeOnlineUser(id);
-    };
-
-    const handleUserList = (list: string[]) => {
-      console.log("User list:", list);
-      setOnlineUsers(list);
-    };
-
-    const onConnect = () => {
-      console.log("my id:", id);
-      socket.emit("join", id);
-      console.log("Join");
+    const handleOnlineUsers = (userIds: string[]) => {
+      setOnlineUserIds(userIds);
     };
 
     if (socket.connected) {
-      onConnect();
+      socket.on("online-users", handleOnlineUsers);
     } else {
-      socket.once("connect", onConnect);
+      socket.once("connect", () => {
+        socket.on("online-users", handleOnlineUsers);
+      });
     }
 
-    socket.on("connect", onConnect);
-    socket.on("user:online", handleUserOnline);
-    socket.on("user:offline", handleUserOffline);
-    socket.on("user:list", handleUserList);
-
     return () => {
-      socket.off("connect", onConnect);
-      socket.off("user:online", handleUserOnline);
-      socket.off("user:offline", handleUserOffline);
-      socket.off("user:list", handleUserList);
+      socket.off("online-users", handleOnlineUsers);
     };
-  }, [id, addOnlineUser, removeOnlineUser, setOnlineUsers]);
+  }, [socket, setOnlineUserIds]);
+
+  return null;
 };

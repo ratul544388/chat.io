@@ -6,7 +6,7 @@ export const ChatTabs = () => {
   const { setActiveTab, activeTab } = useActiveTabStore();
   const tabs: Tab[] = ["My Chats", "Connect People"];
   return (
-    <div className="flex sticky top-0 bg-background border-b">
+    <div className="flex sticky top-0 bg-background z-20 border-b">
       {tabs.map((tab) => (
         <Button
           onClick={() => setActiveTab(tab)}

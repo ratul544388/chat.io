@@ -3,6 +3,7 @@ export interface User {
   name: string;
   email: string;
   image?: string;
+  lastActiveAt: string;
 }
 
 export interface Chat {
@@ -10,14 +11,22 @@ export interface Chat {
   name?: string | null;
   isGroup: boolean;
   image?: string;
+  lastMessageAt: string;
 }
 
 export type ChatWithUsers = Chat & {
   users: User[];
+  messages: {
+    content: string;
+    _count: {
+      media: number;
+    };
+  }[];
 };
 
 export interface Message {
   id: string;
+  chatId: string;
   content?: string;
   media: Media[];
   createdAt: string;

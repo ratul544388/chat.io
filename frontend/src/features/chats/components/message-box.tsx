@@ -12,7 +12,7 @@ export const MessageBox = ({ message }: MessageBoxProps) => {
 
   const isMe = user?.id === message.user.id;
   return (
-    <li className={cn("flex gap-1.5 items-end", isMe && "flex-row-reverse")}>
+    <li className={cn("flex gap-1.5 items-end w-full", isMe && "flex-row-reverse")}>
       <img
         src={message.user.image || placeholderUser}
         alt={message.user.name}

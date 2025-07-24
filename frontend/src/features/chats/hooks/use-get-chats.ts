@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 export const useGetChats = () => {
   const { user } = useAuthStore();
   const { data: chats = [], isPending } = useQuery<ChatWithUsers[]>({
-    queryKey: ["chats", user?.uid],
+    queryKey: ["chats", user?.id],
     queryFn: () => request({ url: "/chats" }),
   });
 

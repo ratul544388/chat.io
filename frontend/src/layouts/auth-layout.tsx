@@ -7,7 +7,6 @@ const AuthLayout = () => {
   if (user) {
     return <Navigate to="/chats" />;
   }
-
   
   return (
     <div className="flex items-center justify-center min-h-screen py-10">

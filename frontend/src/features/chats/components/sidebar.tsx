@@ -1,3 +1,4 @@
+import { useOnlineUserListener } from "@/features/auth/hooks/use-online-user-listener";
 import { useActiveTabStore } from "../hooks/use-active-tab-store";
 import { ChatList } from "./chat-list";
 import { ChatTabs } from "./chat-tabs";
@@ -6,6 +7,8 @@ import { UserList } from "./user-list";
 
 export const Sidebar = () => {
   const { activeTab } = useActiveTabStore();
+  useOnlineUserListener();
+
   return (
     <aside className="h-screen flex flex-col sticky top-0 border-r flex-1 min-w-[300px] max-w-[300px] pb-3">
       <div className="h-header border-b flex items-center px-4">

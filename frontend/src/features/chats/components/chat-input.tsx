@@ -1,14 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 import { useSendMessage } from "../hooks/use-send-message";
+import { useParams } from "react-router";
 
 export const ChatInput = () => {
   const [content, setContent] = useState("");
   const [media, setMedia] = useState<string[]>([]);
   const { sendMessage } = useSendMessage();
   const formRef = useRef<HTMLFormElement>(null);
+  const {chatId} = useParams()
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,15 +45,18 @@ const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className="p-2 border-t sticky bottom-0 bg-background flex items-center gap-1"
+      className="px-2 py-2.5 border-t sticky bottom-0 bg-background flex items-center gap-1"
     >
       <Textarea
+        key={chatId}
+        autoFocus
         value={content}
         maxLength={500}
         onChange={(e) => setContent(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Write a new message..."
         className="rounded-3xl min-h-10 max-h-30 resize-none"
+
       />
       <Button
         disabled={!content.trim()}
