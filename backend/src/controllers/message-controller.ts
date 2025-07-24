@@ -1,9 +1,9 @@
+import { MediaType } from "@prisma/client";
 import { RequestHandler } from "express";
 import { db } from "../lib/db";
-import { messageSchema } from "../validations";
-import { MediaType } from "@prisma/client";
-import { MESSAGE_SELECT } from "../types";
 import { getIO } from "../socket";
+import { MESSAGE_SELECT } from "../types";
+import { messageSchema } from "../validations";
 
 const getMediaType = (url: string): MediaType => {
   const extension = url.split(".").pop()?.split("?")[0].toLowerCase();
@@ -87,6 +87,35 @@ export const getMessages: RequestHandler = async (req, res, next) => {
     });
 
     return res.status(200).json(messages);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const seenMessages: RequestHandler = async (req, res, next) => {
+  try {
+    const { chatId } = req.params;
+    const userId = req.user.id;
+
+    await db.message.updateMany({
+      where: {
+        chatId,
+        seenBy: {
+          none: {
+            id: userId
+          }
+        }
+      },
+      data: {
+        seenByIds: {
+          push: userId,
+        },
+      },
+    });
+
+    const io = getIO();
+
+    io.to(chatId).emit("seen-messages", userId);
   } catch (error) {
     next(error);
   }

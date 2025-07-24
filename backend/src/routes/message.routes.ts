@@ -8,4 +8,6 @@ router.post("/:chatId", authMiddleware, sendMessage);
 
 router.get("/:chatId", authMiddleware, getMessages);
 
+// router.get("/seen/:chatId", authMiddleware, seenMessages);
+
 export default router;

@@ -9,6 +9,7 @@ export const CHAT_SELECT = {
   messages: {
     select: {
       content: true,
+      createdAt: true,
       _count: {
         select: {
           media: true,
@@ -37,6 +38,11 @@ export const MESSAGE_SELECT = {
   media: true,
   createdAt: true,
   chatId: true,
+  seenBy: {
+    select: {
+      image: true,
+    },
+  },
   user: {
     select: {
       id: true,

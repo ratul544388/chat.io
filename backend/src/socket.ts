@@ -3,7 +3,6 @@ import { Server as SocketIOServer, Socket } from "socket.io";
 import { updateLastActiveAt } from "./controllers/user.controller";
 
 let io: SocketIOServer;
-// Map userId => Set of socketIds (handles multiple tabs/devices per user)
 const onlineUsers = new Map<string, Set<string>>();
 
 export const initSocketIO = (server: HTTPServer) => {
@@ -30,13 +29,17 @@ export const initSocketIO = (server: HTTPServer) => {
     }
     onlineUsers.get(userId)!.add(socket.id);
 
-    // Emit updated online users to everyone AND to the newly connected socket
     const onlineUserIds = Array.from(onlineUsers.keys());
     io.emit("online-users", onlineUserIds);
     socket.emit("online-users", onlineUserIds);
 
-    console.log("User connected:", userId);
-    console.log("Online users:", onlineUserIds);
+    // socket.on("chat:join", ({ chatId }) => {
+    //   socket.join(chatId);
+    // });
+
+    // socket.on("chat:leave", ({ chatId }) => {
+    //   socket.leave(chatId);
+    // });
 
     socket.on("disconnect", async () => {
       const userSockets = onlineUsers.get(userId);
@@ -55,7 +58,6 @@ export const initSocketIO = (server: HTTPServer) => {
       console.log("Online users:", updatedUserIds);
     });
 
-    // ... other event handlers ...
   });
 };
 
