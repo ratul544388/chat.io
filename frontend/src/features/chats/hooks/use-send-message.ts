@@ -39,6 +39,7 @@ export const useSendMessage = () => {
         content: variables.content,
         chatId,
         media: [],
+        seenBy: [],
         user: {
           id: user.id,
           name: user.name,

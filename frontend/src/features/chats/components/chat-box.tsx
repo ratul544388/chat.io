@@ -1,12 +1,13 @@
-import { useAuthStore } from "@/features/auth/hooks/use-auth-store";
+import { useAuthUser } from "@/features/auth/hooks/use-auth-store";
+import { cn, formatMessageTime } from "@/lib/utils";
 import type { ChatWithUsers } from "@/types";
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
 import { Avatar } from "./avatar";
-import { getRelativeTimeLabel } from "@/lib/utils";
 
 export const ChatBox = ({ chat }: { chat: ChatWithUsers }) => {
-  const { user: currentUser } = useAuthStore();
+  const currentUser = useAuthUser();
   const otherUser = chat.users.find((user) => user.id !== currentUser?.id);
+  const { chatId } = useParams();
 
   if (!otherUser) {
     return null;
@@ -18,17 +19,20 @@ export const ChatBox = ({ chat }: { chat: ChatWithUsers }) => {
     <li
       role="button"
       tabIndex={1}
-      className="py-1.5 hover:bg-accent rounded-md px-2 transition-colors cursor-pointer"
+      className={cn(
+        "py-1.5 hover:bg-accent rounded-md px-2 transition-colors cursor-pointer",
+        chatId === chat.id && "bg-accent/40"
+      )}
     >
       <Link to={`/chats/${chat.id}`} className="flex items-center gap-2">
         <Avatar otherUser={otherUser} />
-        <div className="font-medium w-full">
-          <p>{otherUser?.name}</p>
-          <div className="flex items-center gap-1.5 pr-3">
+        <div className="w-full">
+          <p className="font-medium">{otherUser?.name}</p>
+          <div className="flex text-muted-foreground items-center gap-1.5 pr-3">
             <p className="text-sm line-clamp-1">{lastMessage}</p>
             <span className="text-muted-foreground -translate-y-[3px]">.</span>
             <span className="whitespace-nowrap text-sm">
-              {getRelativeTimeLabel(chat.lastMessageAt)}
+              {formatMessageTime(chat.lastMessageAt)}
             </span>
           </div>
         </div>

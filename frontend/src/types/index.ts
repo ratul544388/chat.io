@@ -18,6 +18,7 @@ export type ChatWithUsers = Chat & {
   users: User[];
   messages: {
     content: string;
+    createdAt: string;
     _count: {
       media: number;
     };
@@ -30,6 +31,10 @@ export interface Message {
   content?: string;
   media: Media[];
   createdAt: string;
+  seenBy: {
+    id: string;
+    image: string;
+  }[];
 }
 
 export type MessageWithUser = Message & {

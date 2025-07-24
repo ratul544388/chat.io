@@ -1,11 +1,18 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-import { differenceInSeconds, differenceInMinutes, differenceInHours, differenceInWeeks, parseISO } from "date-fns";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+import {
+  differenceInSeconds,
+  differenceInMinutes,
+  differenceInHours,
+  differenceInWeeks,
+  parseISO,
+  isToday,
+  format,
+} from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
-
 
 export function getRelativeTimeLabel(dateString: string): string {
   const now = new Date();
@@ -24,3 +31,12 @@ export function getRelativeTimeLabel(dateString: string): string {
   return `${weeks}w`;
 }
 
+export const formatMessageTime = (dateString: string): string => {
+  const date = parseISO(dateString);
+
+  if (isToday(date)) {
+    return format(date, "p");
+  }
+
+  return format(date, "d MMM");
+};

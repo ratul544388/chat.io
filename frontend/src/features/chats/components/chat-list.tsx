@@ -7,11 +7,11 @@ export const ChatList = () => {
   const { chats, isPending } = useGetChats();
 
   if (isPending) {
-    return <ChatListSkeleton/>
+    return <ChatListSkeleton />;
   }
 
-  if(chats.length === 0) {
-    return <EmptyChatList/>
+  if (chats.length === 0) {
+    return <EmptyChatList />;
   }
 
   return (
